@@ -1,0 +1,258 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }  
+         
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>fmle.sikuli</h2> <a href="fmle.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="str">"""
+Sikuli wrapper around FlashMediaLiveEncoder.
+
+3.1 mac is the only version currently supported.
+"""</span>
+
+
+__all__ = [<span class="str">'fmle'</span>]
+
+
+<span class="kw">class</span> ConnectionError(Exception):
+        <span class="str">"""
+        Raised when FMLE is unable to connect to the server
+        """</span>
+
+
+<span class="kw">class</span> StreamingError(Exception):
+        <span class="str">"""
+        Raised when a streaming error occurs.
+        """</span>
+
+
+<span class="kw">class</span> FlashMediaLiveEncoder(object):
+        <span class="str">"""
+        """</span>
+
+        name = <span class="str">'FlashMediaLiveEncoder'</span>
+
+        _connected = False
+        _streaming = False
+
+        <span class="kw">def</span> openApp(self, timeout=<span class="dig">10</span>):
+                openApp(self.name)
+
+                <span class="skw">wait</span>(<img src="1302557758680.png" />, timeout)
+
+                self.checkForProfileValidation()
+                self.setDefaults()
+
+
+        <span class="kw">def</span> closeApp(self):
+                closeApp(self.name)
+
+
+        <span class="kw">def</span> setDefaults(self):
+                <span class="str">"""
+                When the app has first started, we do some simple
+                checking of options to ensure a solid foundation
+                which to work from.
+                """</span>
+                m = exists(Pattern(<img src="VInutVldeu.png" />).exact(), <span class="dig">0</span>)
+
+                <span class="kw">if</span> m:
+                        <span class="skw">click</span>(m)
+
+                m = exists(Pattern(<img src="JOutputVldeo.png" />).exact(), <span class="dig">0</span>)
+
+                <span class="kw">if</span> m:
+                        <span class="skw">click</span>(m)
+
+                m = exists(Pattern(<img src="VAudm.png" />).exact(), <span class="dig">0</span>)
+
+                <span class="kw">if</span> m:
+                        <span class="skw">click</span>(m)
+
+
+        <span class="kw">def</span> checkForProfileValidation(self):
+                <span class="str">"""
+                FMLE can complain about profile validation when
+                it first opens.
+                """</span>
+                <span class="kw">if</span> exists(Pattern(<img src="ProfileValid.png" />).exact(), <span class="dig">3</span>):
+                        <span class="skw">click</span>(<img src="4.png" />)
+
+
+        <span class="kw">def</span> connect(self, fmsUrl=<span class="str">'rtmp://localhost/live'</span>,
+                                stream=<span class="str">'livestream'</span>, backupUrl=None):
+                <span class="kw">if</span> self._connected:
+                    <span class="kw">return</span>
+
+                m = <span class="skw">find</span>(<img src="FMSURL.png" />)
+                m = <span class="skw">click</span>(m.right(<span class="dig">20</span>))
+                <span class="skw">type</span>(m, <span class="str">"a"</span>, KEY_CMD)
+                <span class="skw">type</span>(m, Key.DELETE)
+                <span class="skw">type</span>(m, fmsUrl)
+
+                m = <span class="skw">find</span>(<img src="BackupURL.png" />)
+                m = <span class="skw">click</span>(m.right(<span class="dig">20</span>))
+                <span class="skw">type</span>(m, <span class="str">"a"</span>, KEY_CMD)
+                <span class="skw">type</span>(m, Key.DELETE)
+
+                <span class="kw">if</span> backupUrl:
+                    <span class="skw">type</span>(backupUrl)
+
+                m = <span class="skw">find</span>(<img src="1302582451486.png" />)
+                m = <span class="skw">click</span>(m.right(<span class="dig">20</span>))
+                <span class="skw">type</span>(m, <span class="str">"a"</span>, KEY_CMD)
+
+                <span class="skw">type</span>(m, stream)
+
+                <span class="skw">click</span>(<img src="1302504754272.png" />)
+
+                <span class="kw">if</span> exists(<img src="ProblemwithP.png" />):
+                        <span class="skw">click</span>(<img src="1302582971794.png" />)
+
+                        <span class="kw">raise</span> ConnectionError()
+
+                <span class="kw">if</span> <span class="kw">not</span> exists(<img src="1302582882469.png" />):
+                        <span class="kw">raise</span> ConnectionError()
+
+                self._connected = True
+
+
+        <span class="kw">def</span> startStreaming(self):
+                <span class="kw">if</span> <span class="kw">not</span> self._connected:
+                    self.connect()
+
+                <span class="kw">if</span> self._streaming:
+                    <span class="kw">return</span>
+
+                <span class="skw">click</span>(<img src="Start-1.png" />)
+                <span class="kw">if</span> <span class="kw">not</span> exists(<img src="Qsqmpmy.png" />, <span class="dig">10</span>):
+                        <span class="kw">raise</span> StreamingError(<span class="str">'Unable to start streaming'</span>)
+
+                self._streaming = True
+
+
+        <span class="kw">def</span> stopStreaming(self):
+                <span class="str">"""
+                """</span>
+                <span class="kw">if</span> <span class="kw">not</span> self._streaming:
+                        <span class="kw">return</span>
+
+                <span class="skw">click</span>(<img src="1302585488172.png" />)
+
+                <span class="kw">if</span> <span class="kw">not</span> exists(<img src="1302585508876.png" />, <span class="dig">5</span>):
+                        <span class="kw">raise</span> StreamingError(<span class="str">'Unable to stop streaming'</span>)
+
+                self._streaming = False
+
+
+        <span class="kw">def</span> disconnect(self):
+                <span class="kw">if</span> <span class="kw">not</span> self._connected:
+                        <span class="kw">return</span>
+
+                <span class="kw">if</span> <span class="kw">not</span> <span class="skw">click</span>(<img src="Disconnect.png" />):
+                        <span class="kw">raise</span> ConnectionError(<span class="str">'Not connected!!'</span>)
+
+                <span class="kw">if</span> <span class="kw">not</span> exists(<img src="1302586095509.png" />):
+                        <span class="kw">raise</span> ConnectionError(<span class="str">'Not connected!!'</span>)
+
+                self._connected = False
+
+
+        <span class="kw">def</span> reset(self):
+                <span class="str">"""
+                Returns the application to a default state
+                """</span>
+                <span class="kw">if</span> self._streaming:
+                        self.stopStreaming()
+
+                <span class="kw">if</span> self._connected:
+                        self.disconnect()
+
+
+        <span class="kw">def</span> __enter__(self):
+                <span class="kw">try</span>:
+                        self.openApp()
+                <span class="kw">except</span>:
+                        self.closeApp()
+
+                        <span class="kw">raise</span>
+
+                <span class="kw">return</span> self
+
+
+        <span class="kw">def</span> __exit__(self, *args):
+                self.closeApp()
+
+                <span class="kw">return</span> False
+
+
+fmle = FlashMediaLiveEncoder()
+</pre>
+</body>
+</html>
